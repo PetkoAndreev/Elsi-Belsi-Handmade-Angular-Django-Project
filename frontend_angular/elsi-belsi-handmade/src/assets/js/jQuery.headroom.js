@@ -1,6 +1,6 @@
-(function($) {
+(function ($) {
 
-  if(!$) {
+  if (!$) {
     return;
   }
 
@@ -8,11 +8,11 @@
   // Plugin //
   ////////////
 
-  $.fn.headroom = function(option) {
-    return this.each(function() {
-      var $this   = $(this),
-        data      = $this.data('headroom'),
-        options   = typeof option === 'object' && option;
+  $.fn.headroom = function (option) {
+    return this.each(function () {
+      var $this = $(this),
+        data = $this.data('headroom'),
+        options = typeof option === 'object' && option;
 
       options = $.extend(true, {}, Headroom.options, options);
 
@@ -24,7 +24,7 @@
       if (typeof option === 'string') {
         data[option]();
 
-        if(option === 'destroy'){
+        if (option === 'destroy') {
           $this.removeData('headroom');
         }
       }
@@ -35,7 +35,7 @@
   // Data API //
   //////////////
 
-  $('[data-headroom]').each(function() {
+  $('[data-headroom]').each(function () {
     var $this = $(this);
     $this.headroom($this.data());
   });

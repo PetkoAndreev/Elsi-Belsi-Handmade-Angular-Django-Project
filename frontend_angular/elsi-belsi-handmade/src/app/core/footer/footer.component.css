@@ -1,0 +1,7 @@
+a.custom-title {
+    color: white;
+}
+
+a.custom-title:hover {
+    color: #FF4400;
+  }
