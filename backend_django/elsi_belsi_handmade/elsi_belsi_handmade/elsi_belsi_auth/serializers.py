@@ -1,6 +1,9 @@
-# Get the user model - default one or rewrited which comes from Django
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+# Get the user model - default one or rewrited which comes from Django
+from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
 
 UserModel = get_user_model()
 
@@ -8,22 +11,58 @@ UserModel = get_user_model()
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = (UserModel.USERNAME_FIELD, 'password')
+        fields = (
+            UserModel.USERNAME_FIELD,
+            'password',
+            'confirm_password',
+        )
 
     # Fix the issue with password as plain text in the db table user
     def create(self, validated_data):
         user = super().create(validated_data)
         user.set_password(validated_data['password'])
+        user.confirm_password = ''
         user.save()
         return user
 
-    # Called on return to hide the password from response
+        # Called on return to hide the password from response
+
     def to_representation(self, instance):
         result = super().to_representation(instance)
         result.pop('password')
+        result.pop('confirm_password')
         return result
 
-    # Ovewrite method validate - to be able to use Django password validators from settings.py
+        # Overwrite method validate - to be able to use Django password validators from settings.py
+
     def validate(self, data):
-        # invoke validators here
-        return super().validate(data)
+        if not data.get(UserModel.USERNAME_FIELD):
+            raise serializers.ValidationError('Please enter a email address.')
+        if UserModel.objects.filter(email=UserModel.USERNAME_FIELD).first():
+            raise serializers.ValidationError('Someone with that email address has already registered. Was it you?')
+        if not data.get('password') or not data.get('confirm_password'):
+            raise serializers.ValidationError('Please enter a password and confirm it.')
+        if data.get('password') != data.get('confirm_password'):
+            raise serializers.ValidationError('Those passwords don\'t match.')
+        return data
+
+
+# Customized access token - add the user email to it.
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+#         token['email'] = user.email
+#         return token
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ['id', 'email', ]
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'

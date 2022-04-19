@@ -1,13 +1,13 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from elsi_belsi_handmade.elsi_belsi_auth.views import RegisterView, LogoutView, LoginView
+from elsi_belsi_handmade.elsi_belsi_auth.views import RegisterView, LogoutView, LoginView, ProfileGetUpdateDeleteView
 
 urlpatterns = (
     path('register/', RegisterView.as_view(), name='register user'),
-    # path('login/', LoginView.as_view(), name='login user'),
-    # path('logout/', LogoutView.as_view(), name='logout user'),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', LoginView.as_view(), name='login user'),
+    path('logout/', LogoutView.as_view(), name='logout user'),
     path('refresh-token/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('verify-token/', TokenVerifyView.as_view(), name='token_verify'),
+    # path('user/', UserView.as_view(), name='get user'),
+    path('profile/<int:pk>', ProfileGetUpdateDeleteView.as_view(), name='get profile'),
 )
