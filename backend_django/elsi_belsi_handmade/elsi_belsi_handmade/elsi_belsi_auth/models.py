@@ -2,9 +2,11 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import MaxValueValidator
 from django.db import models
+from rest_framework_simplejwt.tokens import RefreshToken
+from .managers import ElsiBelsiHandmadeUserManager
 
 # Added PermissionsMixin to be able to work with administration
-from .managers import ElsiBelsiHandmadeUserManager
+AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google', 'email': 'email'}
 
 
 class ElsiBelsiHandmadeUser(AbstractBaseUser, PermissionsMixin):
@@ -28,13 +30,24 @@ class ElsiBelsiHandmadeUser(AbstractBaseUser, PermissionsMixin):
         auto_now_add=True,
     )
 
+    auth_provider = models.CharField(
+        max_length=255, blank=False,
+        null=False, default=AUTH_PROVIDERS['email'])
+
     USERNAME_FIELD = 'email'
 
     objects = ElsiBelsiHandmadeUserManager()
 
-    # # str method visualize data in admin panel as row, not as columns
-    # def __str__(self):
-    #     return f'{self.email}, {self.age}, {self.type}'
+    # str method visualize data in admin panel as row, not as columns
+    def __str__(self):
+        return f'{self.email}'
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
 
 
 class Profile(models.Model):
@@ -60,6 +73,19 @@ class Profile(models.Model):
         default='default_profile_image.jpg',
         blank=True,
         max_length=None,
+    )
+
+    facebook_url = models.URLField(
+        blank=True,
+        null=True,
+    )
+    linked_in_url = models.URLField(
+        blank=True,
+        null=True,
+    )
+    github_url = models.URLField(
+        blank=True,
+        null=True,
     )
 
     user = models.OneToOneField(

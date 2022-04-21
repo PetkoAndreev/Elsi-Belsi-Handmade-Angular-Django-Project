@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
 
 # Get the user model - default one or rewrited which comes from Django
-from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
+from elsi_belsi_handmade.elsi_belsi_products.serializers import ProductsListSerializer
 
 UserModel = get_user_model()
 
@@ -25,16 +25,14 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-        # Called on return to hide the password from response
-
+    # Called on return to hide the password from response
     def to_representation(self, instance):
         result = super().to_representation(instance)
         result.pop('password')
         result.pop('confirm_password')
         return result
 
-        # Overwrite method validate - to be able to use Django password validators from settings.py
-
+    # Overwrite method validate - to be able to use Django password validators from settings.py
     def validate(self, data):
         if not data.get(UserModel.USERNAME_FIELD):
             raise serializers.ValidationError('Please enter a email address.')
@@ -47,22 +45,24 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return data
 
 
-# Customized access token - add the user email to it.
-# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-#     @classmethod
-#     def get_token(cls, user):
-#         token = super().get_token(user)
-#         token['email'] = user.email
-#         return token
-
-
 class UserSerializer(serializers.ModelSerializer):
+    products = ProductsListSerializer(many=True)
+
     class Meta:
         model = UserModel
-        fields = ['id', 'email', ]
+        fields = ['email', 'date_joined', 'products', ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(many=False)
+
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ('user_id', 'first_name', 'last_name', 'age', 'profile_image',
+                  'facebook_url', 'linked_in_url', 'github_url',
+                  )
+        # depth = 2
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.partial_update(request, *args, **kwargs)

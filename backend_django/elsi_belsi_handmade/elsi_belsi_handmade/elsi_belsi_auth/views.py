@@ -4,12 +4,17 @@ from django.contrib.auth import get_user_model, authenticate, logout
 from django.middleware import csrf
 
 from rest_framework import generics as api_views, status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from elsi_belsi_handmade.elsi_belsi_auth.authenticate import get_tokens_for_user
+from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
 from elsi_belsi_handmade.elsi_belsi_auth.serializers import CreateUserSerializer, ProfileSerializer
+from elsi_belsi_handmade.elsi_belsi_products.models import Product
+from elsi_belsi_handmade.elsi_belsi_products.serializers import ProductsListSerializer
+from elsi_belsi_handmade.utils.utils import HasRequiredPermissionForPostPutPatchDelete, get_tokens_for_user, \
+    image_update_delete
 
 # Get the user model - default one or rewrite which comes from Django
 UserModel = get_user_model()
@@ -33,19 +38,19 @@ class LoginView(APIView):
                 data = get_tokens_for_user(user)
                 response.set_cookie(
                     key=settings.SIMPLE_JWT['AUTH_COOKIE'],
-                    value=data["access"],
+                    value=data['access'],
                     expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
                     secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                     httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 )
                 csrf.get_token(request)
-                response.data = {"Success": "Login successfully", "data": data}
+                response.data = {'Success': 'Login successfully', 'data': data}
                 return response
             else:
-                return Response({"No active": "This account is not active!!"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'No active': 'This account is not active!'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({"Invalid": "Invalid email or password!!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'Invalid': 'Invalid email or password!'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class LogoutView(APIView):
@@ -66,58 +71,95 @@ class LogoutView(APIView):
         return self.__perform_logout(request)
 
 
-# class LoginView(TokenObtainPairView):
-#     serializer_class = MyTokenObtainPairSerializer
-
-# class UserView(APIView):
-#     def get(self, request):
-#         token = request.COOKIES.get('access_token')
-#
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-#
-#         try:
-#             payload = jwt.decode(token, key=settings.SECRET_KEY, algorithms=['HS256'])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-#
-#         user = UserModel.objects.filter(id=payload['user_id']).first()
-#         serializer = UserSerializer(user)
-#         return Response(serializer.data)
-
-
 class ProfileGetUpdateDeleteView(APIView):
+    # queryset = Profile.objects.all()
+    # lookup_url_kwarg = 'pk'
     serializer_class = ProfileSerializer
+    permission_classes = [HasRequiredPermissionForPostPutPatchDelete]
+    put_permission_required = 'be the owner of the profile'
+    patch_permission_required = 'be the owner of the profile'
+    delete_permission_required = 'be the owner of the profile'
+    put_patch_error_message = {
+        'message': 'You are not the owner of this profile and you can\'t perform UPDATE operation on it!'}
+    delete_error_message = {
+        'message': 'You are not the owner of this profile and you can\'t perform DELETE operation on it!'}
 
-    # TODO: Add IsAuthenticated
+    def get_object(self, pk):
+        return get_object_or_404(UserModel, id=pk)
+
     # Show user profile page
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(UserModel, id=self.kwargs['pk'])
+        user = self.get_object(pk=self.kwargs['pk'])
         profile_serializer = ProfileSerializer(user.profile)
-        return Response(profile_serializer.data)
+        products = Product.objects.filter(prd_user=profile_serializer.data['user_id'])
+        favorites = Product.objects.filter(favorites__user_id=profile_serializer.data['user_id'])
+
+        product_serializer = ProductsListSerializer(products, many=True)
+        favorites_serializer = ProductsListSerializer(favorites, many=True)
+
+        result = profile_serializer.data
+        result['products'] = product_serializer.data
+        result['favorites'] = favorites_serializer.data
+
+        return Response(result)
 
     def put(self, request, *args, **kwargs):
         try:
-            user = get_object_or_404(UserModel, id=self.kwargs['pk'])
-            profile = ProfileSerializer(user.profile).data
-            profile_serializer = ProfileSerializer(user.profile, data=request.data)
-            default_image_name = 'default_profile_image.jpg'
-            # Not the best way to do it, but it works - tried different scenarios, but the appropriate way with "os.path.join(settings.MEDIA_ROOT, str(db_pet.image))" didn't works
-            image_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, profile['profile_image'][len('/media/'):]))
-            # Check if the profile picture is not the default one and it's changed with a new one
-            if default_image_name not in str(image_path) and request.data['profile_image']:
-                os.remove(image_path)
-            if profile_serializer.is_valid():
-                profile_serializer.save()
-                return Response(profile_serializer.data, status=status.HTTP_200_OK)
-            return Response(profile_serializer.errors)
+            user = self.get_object(pk=self.kwargs['pk'])
+            if user.id == request.user.id:
+                profile = ProfileSerializer(user.profile).data
+                profile_serializer = ProfileSerializer(user.profile, data=request.data)
+                default_image_name = 'default_profile_image.jpg'
+                # Not the best way to do it, but it works - tried different scenarios, but the appropriate way with "os.path.join(settings.MEDIA_ROOT, str(db_pet.image))" didn't works
+                image_path = os.path.abspath(
+                    os.path.join(settings.MEDIA_ROOT, profile['profile_image'][len('/media/'):]))
+                # Check if the profile picture is not the default one and it's changed with a new one
+                if default_image_name not in str(image_path) and 'profile_image' in request.data.keys():
+                    os.remove(image_path)
+                if profile_serializer.is_valid():
+                    profile_serializer.save()
+                    return Response(profile_serializer.data, status=status.HTTP_200_OK)
+                return Response(profile_serializer.errors)
+            return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
         except:
-            return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request):
+    def patch(self, request, *args, **kwargs):
         try:
-            user = get_object_or_404(UserModel, id=self.kwargs['pk'])
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            user = self.get_object(pk=self.kwargs['pk'])
+            if user.id == request.user.id:
+                profile = ProfileSerializer(user.profile).data
+                profile_serializer = ProfileSerializer(user.profile, data=request.data,
+                                                       partial=True)  # set partial=True to update a data partially
+                default_image_name = 'default_profile_image.jpg'
+                # Not the best way to do it, but it works - tried different scenarios, but the appropriate way with "os.path.join(settings.MEDIA_ROOT, str(db_pet.image))" didn't works
+                image_path = os.path.abspath(
+                    os.path.join(settings.MEDIA_ROOT, profile['profile_image'][len('/media/'):]))
+                # Check if the profile picture is not the default one and it's changed with a new one
+                if default_image_name not in str(image_path) and 'profile_image' in request.data.keys():
+                    os.remove(image_path)
+                if profile_serializer.is_valid():
+                    profile_serializer.save()
+                    return Response(profile_serializer.data, status=status.HTTP_200_OK)
+                return Response(profile_serializer.errors)
+            return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
         except:
-            return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            user = self.get_object(pk=self.kwargs['pk'])
+            if user.id == request.user.id:
+                profile = ProfileSerializer(user.profile).data
+                default_image_name = 'default_profile_image.jpg'
+                # Not the best way to do it, but it works - tried different scenarios, but the appropriate way with "os.path.join(settings.MEDIA_ROOT, str(db_pet.image))" didn't works
+                image_path = os.path.abspath(
+                    os.path.join(settings.MEDIA_ROOT, profile['profile_image'][len('/media/'):]))
+                # Check if the profile picture is not the default one and it's changed with a new one
+                if default_image_name not in str(image_path):
+                    os.remove(image_path)
+                user.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(self.delete_error_message, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(self.delete_error_message, status=status.HTTP_404_NOT_FOUND)

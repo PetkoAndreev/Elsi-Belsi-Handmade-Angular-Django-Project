@@ -8,6 +8,5 @@ urlpatterns = (
     path('login/', LoginView.as_view(), name='login user'),
     path('logout/', LogoutView.as_view(), name='logout user'),
     path('refresh-token/', TokenRefreshView.as_view(), name='token_refresh'),
-    # path('user/', UserView.as_view(), name='get user'),
-    path('profile/<int:pk>', ProfileGetUpdateDeleteView.as_view(), name='get profile'),
+    path('profile/<int:pk>/', ProfileGetUpdateDeleteView.as_view(), name='get profile'),
 )
