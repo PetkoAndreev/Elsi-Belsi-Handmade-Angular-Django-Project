@@ -7,7 +7,9 @@ import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 })
 export class HomePageComponent implements OnInit, AfterViewInit {
 
-  constructor(private elementRef: ElementRef) { };
+  constructor(
+    private elementRef: ElementRef,
+    ) { };
 
   ngOnInit(): void {
 

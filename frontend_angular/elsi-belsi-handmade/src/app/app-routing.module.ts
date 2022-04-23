@@ -18,8 +18,8 @@ const routes: Routes = [
   //   loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   // },
   // {
-  //   path: 'themes',
-  //   loadChildren: () => import('./features/themes/themes.module').then(m => m.ThemesModule)
+  //   path: 'products',
+  //   loadChildren: () => import('./features/products/products.module').then(p => p.ProductsModule)
   // },
   // 14.04 - added page-not-found navigation
 
@@ -33,8 +33,4 @@ const routes: Routes = [
   }
 ];
 
-// @NgModule({
-//   imports: [RouterModule.forRoot(routes)],
-//   exports: [RouterModule.forRoot(routes)]
-// })
 export const AppRoutingModule = RouterModule.forRoot(routes)

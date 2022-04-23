@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { FooterComponent } from './footer/footer.component';
+import { UserService } from './services/user.service';
+import { ProductService } from './services/product.service';
 
 
 
@@ -26,7 +28,10 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       // Here should be all services
-      providers: []
+      providers: [
+        UserService,
+        ProductService,
+      ]
     }
   }
 }

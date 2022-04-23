@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-// import { AngularFaviconService } from 'angular-favicon';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +11,9 @@ export class AppComponent {
 
   // Logic to check the URL and if it's not-found to hide header and footer.
   notFoundIsActive: boolean = false;
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+  ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;

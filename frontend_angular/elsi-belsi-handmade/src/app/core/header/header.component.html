@@ -11,23 +11,29 @@
             </a>
 
             <div class="d-lg-none">
-                <a routerLink="/login" class="bi-person custom-icon me-3"></a>
+                <ng-container *ngIf="!isLoggedIn">
+                    <a routerLink="/login" class="bi-person custom-icon me-3"></a>
+                </ng-container>
+                <ng-container *ngIf="isLoggedIn">
+                    <!-- routerLink="/profile" -->
+                    <a href="#" class="bi-person custom-icon me-3"></a>
+                </ng-container>
 
-                <a href="product-detail.html" class="bi-bag custom-icon"></a>
+                <a href="product-detail.html" class="bi-exit custom-icon"></a>
             </div>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" routerLink="/home">Home</a>
+                        <a routerLinkActive="active" class="nav-link" routerLink="/home">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="about.html">Story</a>
+                        <a class="nav-link" href="#">Story</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" routerLink="/products">Products</a>
+                        <a routerLinkActive="active" class="nav-link" routerLink="/products">Products</a>
                     </li>
 
                     <li class="nav-item">
@@ -35,14 +41,15 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
+                        <a class="nav-link" href="contact.html">Contact<i class="fas fa-sign-out"></i></a>
                     </li>
                 </ul>
 
                 <div class="d-none d-lg-block">
                     <a routerLink="/login" class="bi-person custom-icon me-3"></a>
 
-                    <a href="product-detail.html" class="bi-bag custom-icon"></a>
+                    <a *ngIf="!isLoggedIn" href="product-detail.html" class="bi-door-closed custom-icon"></a>
+                    <!-- <a href="product-detail.html" class="bi-bag custom-icon"></a> -->
                 </div>
             </div>
         </div>

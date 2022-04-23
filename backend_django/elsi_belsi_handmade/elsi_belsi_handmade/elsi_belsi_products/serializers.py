@@ -5,7 +5,7 @@ from elsi_belsi_handmade.elsi_belsi_products.models import Product
 class ProductsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price']
+        fields = '__all__'  # ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price']
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):

@@ -1,0 +1,73 @@
+<header class="site-header section-padding d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-10 col-12">
+                <h1>
+                    <span class="d-block text-primary">We provide you</span>
+                    <span class="d-block text-dark">Fashionable Stuffs</span>
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="product-detail section-padding">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-6 col-12">
+                <div class="product-thumb">
+                    <img src={{product.prd_image}} class="img-fluid product-image" alt="">
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-12">
+                <div class="product-info d-flex">
+                    <div>
+                        <h2 class="product-title mb-0">{{product.product_name}}</h2>
+                        <!-- TODO Add logic to see this details only for logged in user who is owner of the product. If logged in user is not the owner should see like and add to favorites-->
+                        <p class="product-p">Likes: {{product.likes.length}}</p>
+                        <p class="product-p">Times added to favorites: {{product.favorites.length}}</p>
+                    </div>
+
+                    <small class="product-price text-muted ms-auto mt-auto mb-5">{{product.prd_price}}</small>
+                </div>
+
+                <div class="product-description">
+
+                    <strong class="d-block mt-4 mb-2">Description</strong>
+
+                    <p class="lead mb-5">{{product.prd_description}}</p>
+                </div>
+
+                <div class="product-cart-thumb row">
+                    <div class="col-lg-6 col-12">
+                        
+                        <select class="form-select cart-form-select" id="inputGroupSelect01">
+                            <option selected>Quantity</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-6 col-12 mt-4 mt-lg-0">
+                        <button type="submit" class="btn custom-btn cart-btn" data-bs-toggle="modal"
+                            data-bs-target="#cart-modal">Add to Cart</button>
+                    </div>
+
+                    <p>
+                        <a href="#" class="product-additional-link">Details</a>
+
+                        <a href="#" class="product-additional-link">Delivery and Payment</a>
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

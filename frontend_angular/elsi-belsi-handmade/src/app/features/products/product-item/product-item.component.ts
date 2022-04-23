@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { IProduct } from 'src/app/core/interfaces';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-product-item',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductItemComponent implements OnInit {
 
-  constructor() { }
+  isLoggedIn: boolean = this.userService.isLoggedIn;
+  isLiked: boolean = false;
+  isFavorite: boolean = true;
+
+  @Input() product!: IProduct;
+
+  constructor(
+    private userService: UserService,
+  ) { }
 
   ngOnInit(): void {
   }
-
 }

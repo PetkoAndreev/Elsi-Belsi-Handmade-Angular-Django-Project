@@ -505,10 +505,10 @@ strong {
   object-fit: fill;
 }
 
-/* .img-fluid {
+.img-fluid {
   max-width: 100%;
   height: auto;
-} */
+}
 
 .slick-bottom {
   background: linear-gradient(to top, var(--dark-color), transparent 90%);

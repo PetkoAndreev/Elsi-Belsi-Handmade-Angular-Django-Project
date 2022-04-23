@@ -1,0 +1,15 @@
+.hero-title {
+    color: #5A5C6C;
+}
+
+.hero-title:hover {
+    color: #FF4400;
+}
+
+.custom-btn {
+    background-color: #FF4400;
+}
+
+.custom-btn:hover {
+    background-color: #5A5C6C;
+}

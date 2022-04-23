@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +18,7 @@ import { ProductsModule } from './features/products/products.module';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     RouterModule,
     CoreModule.forRoot(),
     AppRoutingModule,
@@ -24,7 +26,11 @@ import { ProductsModule } from './features/products/products.module';
     AuthModule,
     ProductsModule,
   ],
-  providers: [],
+  providers: [
+    // This is good approach to provide services where they are used instead of Injectable - root (possible circular dependency)
+
+    // ProductService,
+  ],
   bootstrap: [
     AppComponent,
     HeaderComponent,

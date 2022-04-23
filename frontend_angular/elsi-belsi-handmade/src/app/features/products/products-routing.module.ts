@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { ProductItemComponent } from './product-item/product-item.component';
+import { ProductDetailsComponent } from './product-details/product-details.component';
 import { ProductsPageComponent } from './products-page/products-page.component';
 
 
@@ -8,11 +8,18 @@ import { ProductsPageComponent } from './products-page/products-page.component';
 const routes: Routes = [
     {
         path: 'products',
+        // pathMatch: 'full',
         component: ProductsPageComponent,
     },
     {
-        path: 'products/:id',
-        component: ProductItemComponent,
+        // Place this first to not override the logic to search for product id
+        path: 'products/new',
+        // pathMatch: 'full',
+        component: ProductsPageComponent,
+    },
+    {
+        path: 'products/:productId',
+        component: ProductDetailsComponent,
     }
 ];
 
