@@ -11,7 +11,7 @@ class ProductsListSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price']
+        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'prd_discount']
 
     def create(self, validated_data):
         validated_data['prd_user'] = self.context['request'].user
@@ -21,7 +21,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 class ProductGetUpdateDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'likes', 'favorites']
+        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'prd_discount']
         # depth = 2
 
     # Added logic for patch request

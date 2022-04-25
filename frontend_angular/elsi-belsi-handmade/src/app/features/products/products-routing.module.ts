@@ -1,5 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { ProductDetailsComponent } from './product-details/product-details.component';
+import { ProductNewComponent } from './product-new/product-new.component';
 import { ProductsPageComponent } from './products-page/products-page.component';
 
 
@@ -14,8 +16,8 @@ const routes: Routes = [
     {
         // Place this first to not override the logic to search for product id
         path: 'products/new',
-        // pathMatch: 'full',
-        component: ProductsPageComponent,
+        canActivate: [AuthGuard],
+        component: ProductNewComponent,
     },
     {
         path: 'products/:productId',

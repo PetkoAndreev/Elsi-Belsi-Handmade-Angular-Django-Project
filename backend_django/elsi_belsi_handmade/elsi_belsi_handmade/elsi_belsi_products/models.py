@@ -49,7 +49,7 @@ class Product(models.Model):
         verbose_name='Date Added',
     )
     prd_date_updated = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         verbose_name='Date Updated',
     )
     prd_price = models.DecimalField(
@@ -60,6 +60,15 @@ class Product(models.Model):
         ],
         blank=False,
         null=False,
+    )
+    prd_discount = models.DecimalField(
+        decimal_places=2,
+        max_digits=3,
+        validators=[
+            MinValueValidator(Decimal('0.01')),
+        ],
+        default=0,
+        blank=True,
     )
     prd_user = models.ForeignKey(
         UserModel,
