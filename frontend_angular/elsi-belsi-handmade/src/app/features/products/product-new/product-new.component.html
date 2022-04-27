@@ -8,53 +8,99 @@
 
                 <div class="row">
                     <div class="col-lg-8 col-11 mx-auto">
-                        <form role="form" method="post">
+                        <form role="form" method="post" #newProductForm="ngForm"
+                            (ngSubmit)="submitNewProduct(newProductForm)">
                             <!-- Product name -->
                             <div class="form-floating mb-4 p-0">
-                                <input type="text" name="prd_name" id="prd_name" class="form-control" placeholder="Name"
-                                    required>
+                                <input #productName="ngModel" ngModel type="text" name="prd_name" id="prd_name"
+                                    class="form-control" placeholder="Name" required minlength="5" maxlength="100">
                                 <label class="form-label" for="prd_name">Name*</label>
+                                <ng-container *ngIf="productName.touched && productName.invalid">
+                                    <p *ngIf="productName.errors?.['required']" class="error">
+                                        Product name is required.
+                                    </p>
+                                    <p *ngIf="productName.errors?.['minlength']" class="error">
+                                        Product name must be at least 5 characters long.
+                                    </p>
+                                    <p *ngIf="productName.errors?.['maxlength']" class="error">
+                                        Product name must be maximum 100 characters long.
+                                    </p>
+                                </ng-container>
                             </div>
                             <!-- Product category -->
                             <div class="form-floating mb-4 p-0">
-                                <select class="form-select" aria-label="Product category" name="prd_category" required>
-                                    <option selected>Defult product category</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select #productCategory="ngModel" ngModel class="form-select"
+                                    aria-label="Product category" name="prd_category" required>
+                                    <option value="cards" selected="selected">Cards</option>
+                                    <option value="Jewelry">Jewelry</option>
+                                    <option value="Paintings">Paintings</option>
+                                    <option value="Wooden Toys">Wooden Toys</option>
                                 </select>
                                 <label class="form-label" for="prd_category">Category*</label>
+                                <ng-container *ngIf="productCategory.touched && productCategory.invalid">
+                                    <p *ngIf="productCategory.errors?.['required']" class="error">
+                                        Product category is required.
+                                    </p>
+                                </ng-container>
                             </div>
                             <!-- Product description -->
                             <div class="form-floating mb-4 p-0">
                                 <!-- cols="45" rows="5"  -->
-                                <textarea class="form-control" id="textAreaExample1" name="prd_description"
-                                    id="prd_description" placeholder="Enter product description" required></textarea>
+                                <textarea #productDescription="ngModel" ngModel class="form-control"
+                                    id="textAreaExample1" name="prd_description" id="prd_description"
+                                    placeholder="Enter product description" required minlength="5"
+                                    maxlength="1000"></textarea>
                                 <label class="form-label" for="prd_description">Description*</label>
-
+                                <ng-container *ngIf="productDescription.touched && productDescription.invalid">
+                                    <p *ngIf="productDescription.errors?.['required']" class="error">
+                                        Product description is required.
+                                    </p>
+                                    <p *ngIf="productDescription.errors?.['minlength']" class="error">
+                                        Product description must be at least 10 characters long.
+                                    </p>
+                                    <p *ngIf="productDescription.errors?.['maxlength']" class="error">
+                                        Product description must be maximum 1000 characters long.
+                                    </p>
+                                </ng-container>
                             </div>
                             <!-- Product price -->
                             <div class="form-floating mb-4 p-0">
-                                <input type="number" step="any" name="prd_price" id="prd_price" class="form-control"
-                                    placeholder="Enter product price" required>
+                                <input #productPrice="ngModel" ngModel type="number" step="any" name="prd_price"
+                                    id="prd_price" class="form-control" placeholder="Enter product price" required
+                                    min="0.01">
                                 <label class="form-label" for="prd_price">Price*</label>
+                                <ng-container *ngIf="productPrice.touched && productPrice.invalid">
+                                    <p *ngIf="productDescription.errors?.['required']" class="error">
+                                        Product price is required.
+                                    </p>
+                                    <p *ngIf="productDescription.errors?.['min']" class="error">
+                                        Minimal product price is 0.01.
+                                    </p>
+                                </ng-container>
                             </div>
                             <!-- Product discount -->
-                            <div class="form-floating mb-4 p-0">
+                            <div #productDiscount ngModel class="form-floating mb-4 p-0">
                                 <input type="number" step="0.01" name="prd_discount" id="prd_discount"
                                     class="form-control" placeholder="Enter product discount">
                                 <label class="form-label" for="prd_discount">Discount</label>
                             </div>
                             <!-- Product image -->
-                            <div class="form-floating mb-4 p-0">
+                            <div #productImage ngModel class="form-floating mb-4 p-0">
                                 <input type="file" class="form-control" name="prd_image" id="prd_image" />
                                 <label class="form-label" id="prd_image_label" for="prd_image">Image</label>
                             </div>
 
                             <p>All fields with * are required!</p>
-                            <button type="submit" class="btn custom-btn form-control mt-4 mb-3">
-                                Create
-                            </button>
+                            <div class="buttons">
+                                <button [disabled]="newProductForm.invalid" type="submit"
+                                    class="btn custom-btn form-control mt-4 mb-3 btn-create">
+                                    Create
+                                </button>
+                                <button (click)="navigateToHome()" type="button"
+                                    class="btn custom-btn form-control mt-4 mb-3 btn-cancel">
+                                    Cancel
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

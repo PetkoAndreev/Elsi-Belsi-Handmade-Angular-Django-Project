@@ -13,3 +13,16 @@
 .custom-btn:hover {
     background-color: #5A5C6C;
 }
+
+.error {
+    text-align: left;
+    font-style: italic;
+    font-weight: bold;
+    border-radius: 0.3em;
+    color: red;
+    padding-top: 0;
+}
+
+.custom-password-text {
+    font-size: 12px;
+}

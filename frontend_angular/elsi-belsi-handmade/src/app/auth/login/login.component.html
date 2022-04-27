@@ -8,23 +8,42 @@
 
                 <div class="row">
                     <div class="col-lg-8 col-11 mx-auto">
-                        <form role="form" method="post">
-
+                        <form role="form" method="post" [formGroup]="loginFormGroup" (ngSubmit)="handleLogin()">
+                            <!-- Handle errors from backend -->
+                            <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
                             <div class="form-floating mb-4 p-0">
-                                <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control"
-                                    placeholder="Email address" required>
+                                <!-- pattern="[^ @]*@[^ @]*" -->
+                                <input formControlName="email" type="email" name="email" id="email" class="form-control"
+                                    placeholder="Email address" required
+                                    [class.is-invalid]="shouldShowControlError('email')"
+                                    [class.is-valid]="shouldShowControlClass('email')">
 
                                 <label for="email">Email address</label>
+                                <ng-container *ngIf="shouldShowControlError('email')">
+                                    <p *ngIf="shouldShowValidatorError('email')" class="error">
+                                        Email is required!</p>
+                                    <p *ngIf="!shouldShowValidatorError('email') && shouldShowValidatorError('email', 'pattern')"
+                                        class="error">Email is not valid!</p>
+                                </ng-container>
                             </div>
 
                             <div class="form-floating p-0">
-                                <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Password" required>
+                                <input formControlName="password" type="password" name="password" id="password"
+                                    class="form-control" placeholder="Password" required
+                                    [class.is-invalid]="shouldShowControlError('password')"
+                                    [class.is-valid]="shouldShowControlClass('password')">
 
                                 <label for="password">Password</label>
+                                <ng-container *ngIf="shouldShowControlError('password')">
+                                    <p *ngIf="shouldShowValidatorError('password')" class="error">
+                                        Password is required!</p>
+                                    <p *ngIf="!shouldShowValidatorError('password') && shouldShowValidatorError('password', 'pattern')"
+                                        class="error">
+                                        Wrong password is provided!</p>
+                                </ng-container>
                             </div>
 
-                            <button (click)="loginHandler()" type="submit"
+                            <button [disabled]="loginFormGroup.invalid" type="submit"
                                 class="btn custom-btn form-control mt-4 mb-3">
                                 Sign in
                             </button>

@@ -38,7 +38,8 @@ class ProductListUpdateDeleteView(api_views.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         product = self.get_object()
         if self.request.user.id != product.prd_user_id:
-            raise PermissionDenied('You are not the owner of the product and you can\'t perform UPDATE operation!')
+            raise PermissionDenied(
+                {'message': 'You are not the owner of the product and you can\'t perform UPDATE operation!'})
         else:
             image_update_delete(product, self.request, 'put/patch')
         serializer.save()
@@ -46,7 +47,8 @@ class ProductListUpdateDeleteView(api_views.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         product = self.get_object()
         if self.request.user.id != product.prd_user_id:
-            raise PermissionDenied('You are not the owner of the product and you can\'t perform DELETE operation!')
+            raise PermissionDenied(
+                {'message': 'You are not the owner of the product and you can\'t perform DELETE operation!'})
         else:
             image_update_delete(product, self.request, 'delete')
         instance.delete()
@@ -68,7 +70,7 @@ class FavoriteView(APIView):
             product.save()
         else:
             raise PermissionDenied(
-                'You are not the owner of the product and you can\'t perform ADD TO FAVORITES operation!')
+                {'message': 'You are not the owner of the product and you can\'t perform ADD TO FAVORITES operation!'})
         return redirect('api product details', pk=self.kwargs['pk'])
 
 
@@ -88,5 +90,5 @@ class LikeView(APIView):
             product.save()
         else:
             raise PermissionDenied(
-                'You are not the owner of the product and you can\'t perform LIKE/DISLIKE operation!')
+                {'message': 'You are not the owner of the product and you can\'t perform LIKE/DISLIKE operation!'})
         return redirect('api product details', pk=self.kwargs['pk'])

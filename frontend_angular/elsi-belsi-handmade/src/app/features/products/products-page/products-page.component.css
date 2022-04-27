@@ -1,0 +1,16 @@
+.custom-btn {
+    background-color: #FF4400;
+}
+
+.custom-btn:hover {
+    background-color: #5A5C6C;
+}
+
+.col-lg-10 {
+    width: 70%;
+}
+
+.new-product {
+    width: 30%;
+    padding-bottom: 50px;
+}

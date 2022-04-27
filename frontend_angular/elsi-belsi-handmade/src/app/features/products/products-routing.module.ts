@@ -16,7 +16,7 @@ const routes: Routes = [
     {
         // Place this first to not override the logic to search for product id
         path: 'products/new',
-        canActivate: [AuthGuard],
+        // canActivate: [AuthGuard],
         component: ProductNewComponent,
     },
     {

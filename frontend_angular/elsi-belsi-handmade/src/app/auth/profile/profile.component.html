@@ -1,1 +1,38 @@
-<p>profile works!</p>
+<div class="profile"><img src="./assets/profile.png" alt="default user">
+    <h3>User Info:</h3>
+    <ng-container *ngIf="!isInEditMode">
+        <div class="flex">
+            <p>First Name: </p>
+            <p>Put First Name Here</p>
+        </div>
+        <div class="flex">
+            <p>Last Name: </p>
+            <p>Put First Name Here</p>
+        </div>
+        <div class="flex">
+            <p>Age: </p>
+            <p>Put Age Here</p>
+        </div>
+        <button (click)="isInEditMode = true" class="btn custom-btn form-control mt-4 mb-3 btn-edit">Edit</button>
+    </ng-container>
+    <ng-container *ngIf="isInEditMode">
+        <form #editProfileForm="ngForm" (ngSubmit)="updateProfile()">
+            <div class="flex">
+                <p>First Name: </p>
+                <input #firstName="ngModel" ngModel type="text" name="first-name" ngModel id="first-name">
+            </div>
+            <div class="flex">
+                <p>Last Name: </p>
+                <input #lastName="ngModel" ngModel type="text" name="last-name" ngModel id="last-name">
+            </div>
+            <div class="flex">
+                <p>Age: </p>
+                <input #age="ngModel" ngModel type="number" name="age" ngModel id="age">
+            </div>
+            <!-- [disabled]="editProfileForm.invalid" -->
+            <button class="btn custom-btn form-control mt-4 mb-3 btn-save">Save</button>
+            <button type="button" (click)="exitEditMode()"
+                class="btn custom-btn form-control mt-4 mb-3 btn-cancel">Cancel</button>
+        </form>
+    </ng-container>
+</div>

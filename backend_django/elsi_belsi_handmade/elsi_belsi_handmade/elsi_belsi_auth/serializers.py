@@ -35,13 +35,14 @@ class CreateUserSerializer(serializers.ModelSerializer):
     # Overwrite method validate - to be able to use Django password validators from settings.py
     def validate(self, data):
         if not data.get(UserModel.USERNAME_FIELD):
-            raise serializers.ValidationError('Please enter a email address.')
-        if UserModel.objects.filter(email=UserModel.USERNAME_FIELD).first():
-            raise serializers.ValidationError('Someone with that email address has already registered. Was it you?')
+            raise serializers.ValidationError({'message': 'Please enter an email address.'})
+        if data.get(UserModel.USERNAME_FIELD) == UserModel.objects.filter(email=UserModel.USERNAME_FIELD).first():
+            raise serializers.ValidationError(
+                {'message': 'Someone with that email address has already registered. Was it you?'})
         if not data.get('password') or not data.get('confirm_password'):
-            raise serializers.ValidationError('Please enter a password and confirm it.')
+            raise serializers.ValidationError({'message': 'Please enter a password and confirm it.'})
         if data.get('password') != data.get('confirm_password'):
-            raise serializers.ValidationError('Those passwords don\'t match.')
+            raise serializers.ValidationError({'message': 'Those passwords don\'t match.'})
         return data
 
 

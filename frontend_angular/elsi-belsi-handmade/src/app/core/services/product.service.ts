@@ -13,6 +13,10 @@ export class ProductService {
     private http: HttpClient,
   ) { }
 
+  addProduct$(body: { productName: string, productCategory: string, productDescription: string, productPrice: number, productDiscount?: number, productImage?: any }): Observable<IProduct> {
+    return this.http.post<IProduct>(`${apiUrl}/products/`, body, { withCredentials: true })
+  }
+
   loadProductList(): Observable<IProduct[]> {
     return this.http.get<IProduct[]>(`${apiUrl}/products/`);
   }

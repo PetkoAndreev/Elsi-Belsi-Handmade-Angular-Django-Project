@@ -8,6 +8,11 @@
                     <span class="d-block text-dark">favorite stuffs</span>
                 </h1>
             </div>
+            <div class="new-product">
+                <a routerLink="/products/new" class="btn custom-btn form-control mt-4 mb-3">
+                    Add New Product
+                </a>
+            </div>
         </div>
     </div>
 </header>
@@ -20,8 +25,7 @@
                 <h2 class="mb-5">New Arrivals</h2>
             </div>
             <!-- (productList | slice:5:8) - show few products -->
-            <app-product-item class="col-lg-4 col-12 mb-3" *ngFor="let product of productList;"
-                [product]="product">
+            <app-product-item class="col-lg-4 col-12 mb-3" *ngFor="let product of productList;" [product]="product">
             </app-product-item>
             <div *ngIf="productList.length === 0 ">No Products!</div>
 

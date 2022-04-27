@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator
 from django.db import models
 
 from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
@@ -24,6 +24,9 @@ class Product(models.Model):
 
     product_name = models.CharField(
         max_length=100,
+        validators=[
+            MinLengthValidator(5),
+        ],
         blank=False,
         null=False,
     )
@@ -35,6 +38,9 @@ class Product(models.Model):
     )
     prd_description = models.TextField(
         max_length=1000,
+        validators=[
+            MinLengthValidator(10),
+        ],
         blank=False,
         null=False,
     )
@@ -64,9 +70,6 @@ class Product(models.Model):
     prd_discount = models.DecimalField(
         decimal_places=2,
         max_digits=3,
-        validators=[
-            MinValueValidator(Decimal('0.01')),
-        ],
         default=0,
         blank=True,
     )

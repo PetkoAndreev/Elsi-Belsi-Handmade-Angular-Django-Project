@@ -23,32 +23,72 @@
 
                 <div class="row">
                     <div class="col-lg-8 col-11 mx-auto">
-                        <form role="form" method="post">
-
+                        <form role="form" method="post" [formGroup]="registerFormGroup" (ngSubmit)="handleRegister()">
+                            <!-- Handle errors from backend -->
+                            <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
                             <div class="form-floating">
-                                <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control"
-                                    placeholder="Email address" required>
+                                <input formControlName="email" type="email" name="email" id="email"
+                                    pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required
+                                    [class.is-invalid]="shouldShowControlError('email')"
+                                    [class.is-valid]="shouldShowControlClass('email')">
 
                                 <label for="email">Email address</label>
+                                <ng-container *ngIf="shouldShowControlError('email')">
+                                    <p *ngIf="shouldShowValidatorError('email')" class="error">
+                                        Email is required!</p>
+                                    <p *ngIf="!shouldShowValidatorError('email') && shouldShowValidatorError('email', 'pattern')"
+                                        class="error">Email is not valid!</p>
+                                </ng-container>
                             </div>
 
-                            <div class="form-floating my-4">
-                                <input type="password" name="password" id="password" pattern="[0-9a-zA-Z]{4,10}"
-                                    class="form-control" placeholder="Password" required>
+                            <div formGroupName="passwords">
+                                <div class="form-floating my-4">
+                                    <!-- pattern="[0-9a-zA-Z]{4,10}" -->
+                                    <input formControlName="password" type="password" name="password" id="password"
+                                        class="form-control" placeholder="Password" required
+                                        [class.is-invalid]="shouldShowControlError('password', passwordsGroup)"
+                                        [class.is-valid]="shouldShowControlClass('password', passwordsGroup)">
 
-                                <label for="password">Password</label>
+                                    <label for="password">Password</label>
+                                    <ng-container *ngIf="shouldShowControlError('password', passwordsGroup)">
+                                        <p *ngIf="shouldShowValidatorError('password', 'required', passwordsGroup)"
+                                            class="error">
+                                            Password is required!</p>
+                                        <p *ngIf="!shouldShowValidatorError('password', 'required', passwordsGroup) && shouldShowValidatorError('password', 'pattern', passwordsGroup)"
+                                            class="error">
+                                            Password must be at least 8 characters and contains:
+                                        </p>
+                                        <ol *ngIf="!shouldShowValidatorError('password', 'required', passwordsGroup) && shouldShowValidatorError('password', 'pattern', passwordsGroup)"
+                                            class="error">
+                                            <li>at least 1 lower case letter [a-z]</li>
+                                            <li>at least 1 upper case letter [A-Z]</li>
+                                            <li>at least 1 numeric character [0-9]</li>
+                                            <li>at least 1 special character
+                                                [~`!@#$%^&*()-_+=&#10100;&#10101;[]|\;:"&lt;&gt;,./?]</li>
+                                        </ol>
+                                    </ng-container>
+                                    <p class="custom-password-text text-center">* shall include 0-9 a-z A-Z
+                                        ~`!@#$%^&*()-_+=&#10100;&#10101;[]|\;:"&lt;&gt;,./? in at least 8 characters</p>
+                                </div>
 
-                                <!-- <p class="text-center">* shall include 0-9 a-z A-Z in 4 to 10 characters</p> -->
+                                <div class="form-floating">
+                                    <input formControlName="rePassword" type="password" name="confirm_password"
+                                        id="confirm_password" class="form-control" placeholder="Repeat password"
+                                        required
+                                        [class.is-invalid]="shouldShowControlError('rePassword', passwordsGroup)"
+                                        [class.is-valid]="shouldShowControlClass('rePassword', passwordsGroup)">
+
+                                    <label for="confirm_password">Password Confirmation</label>
+                                    <ng-container *ngIf="shouldShowControlError('rePassword', passwordsGroup)">
+                                        <p class="error">
+                                            Repeat Password does not match password!
+                                        </p>
+                                    </ng-container>
+                                </div>
                             </div>
 
-                            <div class="form-floating">
-                                <input type="password" name="confirm_password" id="confirm_password"
-                                    pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Password" required>
-
-                                <label for="confirm_password">Password Confirmation</label>
-                            </div>
-
-                            <button type="submit" class="btn custom-btn form-control mt-4 mb-3">
+                            <button [disabled]="registerFormGroup.invalid" type="submit"
+                                class="btn custom-btn form-control mt-4 mb-3">
                                 Create account
                             </button>
 
