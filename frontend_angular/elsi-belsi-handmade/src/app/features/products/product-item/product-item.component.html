@@ -6,7 +6,7 @@
     <div class="product-top d-flex">
         <span class="product-alert me-auto">New Arrival</span>
         <!-- Logic for like/dislike add-to and remove-from favorites functionality -->
-        <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="(isLoggedIn$ | async)">
             <a href="#" [ngClass]="{'bi-heart': !isLiked, 'bi-heart-fill': isLiked}" class="product-icon heart"></a>
             <a href="#" [ngClass]="{'bi-star': !isFavorite, 'bi-star-fill': isFavorite}" class="product-icon star"></a>
         </ng-container>
@@ -15,10 +15,10 @@
     <div class="product-info d-flex">
         <div>
             <h5 class="product-title mb-0">
-                <a href="product-detail.html" class="product-title-link">{{product.product_name}}</a>
+                <a [routerLink]="['/products', product.id]" class="product-title-link">{{product.product_name}}</a>
             </h5>
-
-            <p class="product-p">{{product.prd_description}}</p>
+            <p class="product-p" *ngIf="product.prd_description.length > 100">{{(product.prd_description |
+                slice:0:100) + '...'}}</p>
         </div>
 
         <small class="product-price text-muted ms-auto">${{product.prd_price}}</small>

@@ -4,7 +4,7 @@ import { ProductsPageComponent } from './products-page/products-page.component';
 import { ProductItemComponent } from './product-item/product-item.component';
 import { ProductsRoutingModule } from './products-routing.module';
 import { ProductDetailsComponent } from './product-details/product-details.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductNewComponent } from './product-new/product-new.component'
 
 
@@ -20,6 +20,7 @@ import { ProductNewComponent } from './product-new/product-new.component'
     CommonModule,
     ProductsRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
   ]
 })
 export class ProductsModule { }

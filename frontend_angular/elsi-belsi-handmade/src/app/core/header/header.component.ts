@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { IUser } from '../interfaces';
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,22 +12,40 @@ import { UserService } from '../services/user.service';
 export class HeaderComponent implements OnInit, AfterViewInit {
 
   //define the toogle class property
-  toggleClass: boolean = false;
+  // toggleClass: boolean = false;
 
-  get isLoggedIn(): boolean {
-    return this.userService.isLoggedIn;
-  }
+  currentUser$: Observable<IUser> = this.authService.currentUser$;
+  isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
 
-  get currentUser(): IUser {
-    return this.userService.currentUser;
-  }
+  private isLoggingOut: boolean = false;
 
   constructor(
-    public userService: UserService,
+    public authService: AuthService,
+    private router: Router,
     private elementRef: ElementRef,
   ) { }
 
   ngOnInit(): void { }
+
+  logoutHandler(): void {
+    // With this boolean we solve multiple click on logout
+    if (this.isLoggingOut) {
+      return;
+    }
+    this.authService.logout$().subscribe({
+      next: args => {
+        console.log(args);
+      },
+      complete: () => {
+        this.isLoggingOut = true;
+        localStorage.removeItem('access')
+        this.router.navigate(['/home'])
+      },
+      error: () => {
+        this.isLoggingOut = false;
+      }
+    });
+  }
 
   // Added logic for load custom js files which comes from the theme.
   ngAfterViewInit() {

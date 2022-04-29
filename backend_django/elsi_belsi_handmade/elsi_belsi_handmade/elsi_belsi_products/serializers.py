@@ -13,15 +13,15 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'prd_discount']
 
-    def create(self, validated_data):
-        validated_data['prd_user'] = self.context['request'].user
-        return super().create(validated_data)
+    # def create(self, validated_data):
+    #     validated_data['prd_user'] = self.context['request'].user
+    #     return super().create(validated_data)
 
 
 class ProductGetUpdateDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'prd_discount']
+        fields = ['product_name', 'prd_category', 'prd_description', 'prd_image', 'prd_price', 'prd_discount', 'likes', 'favorites']
         # depth = 2
 
     # Added logic for patch request

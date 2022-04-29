@@ -1,10 +1,11 @@
+import os
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
 
 # Get the user model - default one or rewrited which comes from Django
-from elsi_belsi_handmade.elsi_belsi_products.serializers import ProductsListSerializer
-
 UserModel = get_user_model()
 
 
@@ -47,11 +48,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    products = ProductsListSerializer(many=True)
-
     class Meta:
         model = UserModel
-        fields = ['email', 'date_joined', 'products', ]
+        fields = ['id', 'email', 'date_joined', ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):

@@ -18,10 +18,11 @@ DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = []
 
 # Added cors to be able to allow angular to access django
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
     config('CORS_HOST'),
+    config('CORS_HOST2'),
 )
 
 # Application definition
@@ -33,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_filters',
 
     'elsi_belsi_handmade.elsi_belsi_auth',
     'elsi_belsi_handmade.elsi_belsi_products',
@@ -173,8 +176,8 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=2),
 
     # Custom
     'AUTH_COOKIE': 'access_token',  # Cookie name. Enables cookies if value is set.
@@ -182,7 +185,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SECURE': False,  # Whether the auth cookies should be secure (https:// only).
     'AUTH_COOKIE_HTTP_ONLY': True,  # Http only cookie flag. It's not fetch by javascript.
     'AUTH_COOKIE_PATH': '/',  # The path of the auth cookie.
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'AUTH_COOKIE_SAMESITE': 'None',
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
 }
 

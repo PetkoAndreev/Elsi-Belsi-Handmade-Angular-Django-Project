@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { UserService } from 'src/app/core/services/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { emailPattern, passwordPattern } from '../auth-utils';
 
 @Component({
@@ -19,9 +19,10 @@ export class LoginComponent implements OnInit {
   });
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -41,12 +42,17 @@ export class LoginComponent implements OnInit {
 
   handleLogin(): void {
     this.errorMessage = '';
-    this.userService.login$(this.loginFormGroup.value).subscribe({
+    this.authService.login$(this.loginFormGroup.value).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        // Navigation to the page before login, e.g. if we try to add new product, but we're not logged in - after this it'll navigate us to the add new product page insted of home page.
+        if (this.activatedRoute.snapshot.queryParams['redirect-to']) {
+          this.router.navigateByUrl(this.activatedRoute.snapshot.queryParams['redirect-to'])
+        }
+        else {
+          this.router.navigate(['/home']);
+        }
       },
       complete: () => {
-
       },
       error: (err) => {
         console.log(err)

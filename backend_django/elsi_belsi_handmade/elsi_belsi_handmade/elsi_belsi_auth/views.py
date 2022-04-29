@@ -1,20 +1,19 @@
 import os
+
 from django.conf import settings
 from django.contrib.auth import get_user_model, authenticate, logout
 from django.middleware import csrf
+from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import generics as api_views, status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework import generics as api_views, status, filters
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from elsi_belsi_handmade.elsi_belsi_auth.models import Profile
 from elsi_belsi_handmade.elsi_belsi_auth.serializers import CreateUserSerializer, ProfileSerializer
 from elsi_belsi_handmade.elsi_belsi_products.models import Product
 from elsi_belsi_handmade.elsi_belsi_products.serializers import ProductsListSerializer
-from elsi_belsi_handmade.utils.utils import HasRequiredPermissionForPostPutPatchDelete, get_tokens_for_user, \
-    image_update_delete
+from elsi_belsi_handmade.utils.utils import HasRequiredPermissionForPostPutPatchDelete, get_tokens_for_user, get_payload
 
 # Get the user model - default one or rewrite which comes from Django
 UserModel = get_user_model()
@@ -45,7 +44,7 @@ class LoginView(APIView):
                     samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 )
                 csrf.get_token(request)
-                response.data = {'message': 'Login successfully', 'data': data}
+                response.data = {'message': 'Login successfully', 'data': data, }
                 return response
             else:
                 return Response({'message': 'This account is not active!'}, status=status.HTTP_404_NOT_FOUND)
@@ -84,12 +83,20 @@ class ProfileGetUpdateDeleteView(APIView):
     delete_error_message = {
         'message': 'You are not the owner of this profile and you can\'t perform DELETE operation on it!'}
 
-    def get_object(self, pk):
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['id', 'product_name', 'prd_price']
+    search_fields = ['id', 'product_name', 'prd_category', 'prd_description', 'prd_price']
+    ordering_fields = ['id', 'product_name', 'prd_category']
+
+    @staticmethod
+    def get_object(pk):
         return get_object_or_404(UserModel, id=pk)
 
     # Show user profile page
     def get(self, request, *args, **kwargs):
-        user = self.get_object(pk=self.kwargs['pk'])
+        # Get the payload - info from the jwt token.
+        payload = get_payload(request)
+        user = self.get_object(pk=payload['user_id'])
         profile_serializer = ProfileSerializer(user.profile)
         products = Product.objects.filter(prd_user=profile_serializer.data['user_id'])
         favorites = Product.objects.filter(favorites__user_id=profile_serializer.data['user_id'])
@@ -104,8 +111,10 @@ class ProfileGetUpdateDeleteView(APIView):
         return Response(result)
 
     def put(self, request, *args, **kwargs):
+        # Get the payload - info from the jwt token.
+        payload = get_payload(request)
         try:
-            user = self.get_object(pk=self.kwargs['pk'])
+            user = self.get_object(pk=payload['user_id'])
             if user.id == request.user.id:
                 profile = ProfileSerializer(user.profile).data
                 profile_serializer = ProfileSerializer(user.profile, data=request.data)
@@ -113,6 +122,7 @@ class ProfileGetUpdateDeleteView(APIView):
                 # Not the best way to do it, but it works - tried different scenarios, but the appropriate way with "os.path.join(settings.MEDIA_ROOT, str(db_pet.image))" didn't works
                 image_path = os.path.abspath(
                     os.path.join(settings.MEDIA_ROOT, profile['profile_image'][len('/media/'):]))
+
                 # Check if the profile picture is not the default one and it's changed with a new one
                 if default_image_name not in str(image_path) and 'profile_image' in request.data.keys():
                     os.remove(image_path)
@@ -125,8 +135,10 @@ class ProfileGetUpdateDeleteView(APIView):
             return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
 
     def patch(self, request, *args, **kwargs):
+        # Get the payload - info from the jwt token.
+        payload = get_payload(request)
         try:
-            user = self.get_object(pk=self.kwargs['pk'])
+            user = self.get_object(pk=payload['user_id'])
             if user.id == request.user.id:
                 profile = ProfileSerializer(user.profile).data
                 profile_serializer = ProfileSerializer(user.profile, data=request.data,
@@ -147,8 +159,10 @@ class ProfileGetUpdateDeleteView(APIView):
             return Response(self.put_patch_error_message, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, *args, **kwargs):
+        # Get the payload - info from the jwt token.
+        payload = get_payload(request)
         try:
-            user = self.get_object(pk=self.kwargs['pk'])
+            user = self.get_object(pk=payload['user_id'])
             if user.id == request.user.id:
                 profile = ProfileSerializer(user.profile).data
                 default_image_name = 'default_profile_image.jpg'

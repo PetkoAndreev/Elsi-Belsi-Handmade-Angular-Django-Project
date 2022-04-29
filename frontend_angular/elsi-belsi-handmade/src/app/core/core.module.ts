@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { FooterComponent } from './footer/footer.component';
 import { UserService } from './services/user.service';
 import { ProductService } from './services/product.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 
@@ -31,6 +33,12 @@ export class CoreModule {
       providers: [
         UserService,
         ProductService,
+        // Added interceptor for login/register
+        {
+          provide: HTTP_INTERCEPTORS,
+          multi: true,
+          useClass: AuthInterceptor,
+        }
       ]
     }
   }

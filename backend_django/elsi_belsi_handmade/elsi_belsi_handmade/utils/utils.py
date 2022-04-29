@@ -1,4 +1,6 @@
 import os
+
+import jwt
 from rest_framework import permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -12,6 +14,11 @@ def get_tokens_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
+
+
+def get_payload(request):
+    token = request.COOKIES.get('access_token')
+    return jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
 
 # Custom permission IsAuthenticated for POST, PUT, PATCH and DELETE methods/requests

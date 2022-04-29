@@ -1,12 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
-from rest_framework import generics as api_views
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics as api_views, filters
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from elsi_belsi_handmade.elsi_belsi_products.models import Product
 from elsi_belsi_handmade.elsi_belsi_products.serializers import ProductsListSerializer, ProductCreateSerializer, \
     ProductGetUpdateDeleteSerializer
-from elsi_belsi_handmade.utils.utils import HasRequiredPermissionForPostPutPatchDelete, image_update_delete
+from elsi_belsi_handmade.utils.utils import HasRequiredPermissionForPostPutPatchDelete, image_update_delete, get_payload
+
+UserModel = get_user_model()
 
 
 class ProductsListCreateView(api_views.ListCreateAPIView):
@@ -14,6 +18,11 @@ class ProductsListCreateView(api_views.ListCreateAPIView):
     permission_classes = [HasRequiredPermissionForPostPutPatchDelete]
     post_permission_required = 'logged in or to register an account to be able to create products and'
     query_filter_names = ('prd_category',)
+    # Filter by field logic, search, ordering
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['id', 'product_name', 'prd_price']
+    search_fields = ['id', 'product_name', 'prd_category', 'prd_description', 'prd_price']
+    ordering_fields = ['id', 'product_name', 'prd_category']
 
     list_serializer_class = ProductsListSerializer
     create_serializer_class = ProductCreateSerializer
@@ -22,6 +31,11 @@ class ProductsListCreateView(api_views.ListCreateAPIView):
         if self.request.method.lower() == 'post':
             return self.create_serializer_class
         return self.list_serializer_class
+
+    def perform_create(self, serializer):
+        payload = get_payload(self.request)
+        user = UserModel.objects.filter(pk=payload['user_id']).first()
+        serializer.save(prd_user=user)
 
 
 class ProductListUpdateDeleteView(api_views.RetrieveUpdateDestroyAPIView):
@@ -36,6 +50,7 @@ class ProductListUpdateDeleteView(api_views.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductGetUpdateDeleteSerializer
 
     def perform_update(self, serializer):
+        # payload = get_payload(self.request)
         product = self.get_object()
         if self.request.user.id != product.prd_user_id:
             raise PermissionDenied(

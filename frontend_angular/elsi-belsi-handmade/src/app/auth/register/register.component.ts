@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CreateUserDto, UserService } from 'src/app/core/services/user.service';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { CreateUserDto } from 'src/app/core/services/user.service';
 import { emailPattern, passwordMatch, passwordPattern } from '../auth-utils';
 
 @Component({
@@ -28,7 +29,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
   ) { }
 
@@ -57,9 +58,9 @@ export class RegisterComponent implements OnInit {
       confirm_password: passwords.rePassword,
     }
 
-    this.userService.register$(body).subscribe({
+    this.authService.register$(body).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/user/login']);
       },
       complete: () => {
 

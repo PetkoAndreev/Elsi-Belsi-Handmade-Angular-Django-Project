@@ -12,8 +12,9 @@
                             (ngSubmit)="submitNewProduct(newProductForm)">
                             <!-- Product name -->
                             <div class="form-floating mb-4 p-0">
-                                <input #productName="ngModel" ngModel type="text" name="prd_name" id="prd_name"
-                                    class="form-control" placeholder="Name" required minlength="5" maxlength="100">
+                                <input #productName="ngModel" type="text" name="prd_name" id="prd_name"
+                                    class="form-control" placeholder="Name" ngModel required minlength="5"
+                                    maxlength="100">
                                 <label class="form-label" for="prd_name">Name*</label>
                                 <ng-container *ngIf="productName.touched && productName.invalid">
                                     <p *ngIf="productName.errors?.['required']" class="error">
@@ -31,7 +32,7 @@
                             <div class="form-floating mb-4 p-0">
                                 <select #productCategory="ngModel" ngModel class="form-select"
                                     aria-label="Product category" name="prd_category" required>
-                                    <option value="cards" selected="selected">Cards</option>
+                                    <option value="Cards" selected>Cards</option>
                                     <option value="Jewelry">Jewelry</option>
                                     <option value="Paintings">Paintings</option>
                                     <option value="Wooden Toys">Wooden Toys</option>
@@ -96,7 +97,8 @@
                                     class="btn custom-btn form-control mt-4 mb-3 btn-create">
                                     Create
                                 </button>
-                                <button (click)="navigateToHome()" type="button"
+                                <!-- Variant to navigate to home - (click)="navigateToHome()" -->
+                                <button onclick="history.back(-1)" type="button"
                                     class="btn custom-btn form-control mt-4 mb-3 btn-cancel">
                                     Cancel
                                 </button>

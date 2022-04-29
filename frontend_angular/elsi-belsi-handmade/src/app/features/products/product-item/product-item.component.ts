@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { IProduct } from 'src/app/core/interfaces';
-import { UserService } from 'src/app/core/services/user.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-product-item',
@@ -9,14 +10,14 @@ import { UserService } from 'src/app/core/services/user.service';
 })
 export class ProductItemComponent implements OnInit {
 
-  isLoggedIn: boolean = this.userService.isLoggedIn;
+  isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
   isLiked: boolean = false;
   isFavorite: boolean = true;
 
   @Input() product!: IProduct;
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {

@@ -9,18 +9,18 @@ import { ProductsPageComponent } from './products-page/products-page.component';
 // Added login, register and profile navigation paths
 const routes: Routes = [
     {
-        path: 'products',
-        // pathMatch: 'full',
+        path: '',
+        pathMatch: 'full',
         component: ProductsPageComponent,
     },
     {
         // Place this first to not override the logic to search for product id
-        path: 'products/new',
-        // canActivate: [AuthGuard],
+        path: 'new',
+        canActivate: [AuthGuard],
         component: ProductNewComponent,
     },
     {
-        path: 'products/:productId',
+        path: ':productId',
         component: ProductDetailsComponent,
     }
 ];

@@ -15,59 +15,174 @@
 <section class="product-detail section-padding">
     <div class="container">
         <div class="row">
-
-            <div class="col-lg-6 col-12">
-                <div class="product-thumb">
-                    <img src={{product.prd_image}} class="img-fluid product-image" alt="">
-                </div>
-            </div>
-
-            <div class="col-lg-6 col-12">
-                <div class="product-info d-flex">
-                    <div>
-                        <h2 class="product-title mb-0">{{product.product_name}}</h2>
-                        <!-- TODO Add logic to see this details only for logged in user who is owner of the product. If logged in user is not the owner should see like and add to favorites-->
-                        <p class="product-p">Likes: {{product.likes.length}}</p>
-                        <p class="product-p">Times added to favorites: {{product.favorites.length}}</p>
-                    </div>
-
-                    <small class="product-price text-muted ms-auto mt-auto mb-5">{{product.prd_price}}</small>
-                </div>
-
-                <div class="product-description">
-
-                    <strong class="d-block mt-4 mb-2">Description</strong>
-
-                    <p class="lead mb-5">{{product.prd_description}}</p>
-                </div>
-
-                <div class="product-cart-thumb row">
+            <!-- Check if the user is logged in -->
+            <ng-container *ngIf="(isLoggedIn$ | async)">
+                <ng-container *ngIf="!isInEditMode">
                     <div class="col-lg-6 col-12">
-                        
-                        <select class="form-select cart-form-select" id="inputGroupSelect01">
-                            <option selected>Quantity</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
+                        <div class="product-thumb">
+                            <img src={{product.prd_image}} class="img-fluid product-image" alt="">
+                        </div>
                     </div>
 
-                    <div class="col-lg-6 col-12 mt-4 mt-lg-0">
-                        <button type="submit" class="btn custom-btn cart-btn" data-bs-toggle="modal"
-                            data-bs-target="#cart-modal">Add to Cart</button>
+                    <div class="col-lg-6 col-12">
+                        <div class="product-info d-flex">
+                            <div>
+                                <h2 class="product-title mb-0">{{product.product_name}}</h2>
+                                <!-- TODO Add logic to see this details only for logged in user who is owner of the product. If logged in user is not the owner should see like and add to favorites-->
+                                <p class="product-p">Likes: {{product.likes.length}}</p>
+                                <p class="product-p">Times added to favorites: {{product.favorites.length}}</p>
+                            </div>
+
+                            <small class="product-price text-muted ms-auto mt-auto mb-5">{{product.prd_price}}</small>
+                        </div>
+
+                        <div class="product-description">
+
+                            <strong class="d-block mt-4 mb-2">Description</strong>
+                            <p class="lead mb-5">{{product.prd_description}}</p>
+                        </div>
+
+                        <div class="product-cart-thumb row">
+                            <!-- <div class="col-lg-6 col-12">
+
+                                <select class="form-select cart-form-select" id="inputGroupSelect01">
+                                    <option selected>Quantity</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div> -->
+
+                            <div class="col-lg-6 col-12 mt-4 mt-lg-0">
+                                <button (click)="isInEditMode = true"
+                                    class="btn custom-btn form-control mt-4 mb-3 btn-edit">Edit</button>
+                            </div>
+                        </div>
+
                     </div>
+                </ng-container>
+                <ng-container *ngIf="isInEditMode">
+                    <section class="sign-in-form section-padding">
+                        <div class="container">
+                            <div class="row">
 
-                    <p>
-                        <a href="#" class="product-additional-link">Details</a>
+                                <div class="col-lg-8 mx-auto col-12">
 
-                        <a href="#" class="product-additional-link">Delivery and Payment</a>
-                    </p>
-                </div>
+                                    <h1 class="hero-title text-center mb-5">Update Product</h1>
 
-            </div>
+                                    <div class="row">
+                                        <div class="col-lg-8 col-11 mx-auto">
+                                            <form role="form" method="post" #editProductForm="ngForm"
+                                                (ngSubmit)="updateProduct()">
+                                                <!-- Product name -->
+                                                <div class="form-floating mb-4 p-0">
+                                                    <input #productName="ngModel" type="text" name="prd_name"
+                                                        id="prd_name" class="form-control" placeholder="Name" ngModel
+                                                        required minlength="5" maxlength="100" [(ngModel)]="product.product_name">
+                                                    <label class="form-label" for="prd_name">Name</label>
+                                                    <ng-container *ngIf="productName.touched && productName.invalid">
+                                                        <p *ngIf="productName.errors?.['required']" class="error">
+                                                            Product name is required.
+                                                        </p>
+                                                        <p *ngIf="productName.errors?.['minlength']" class="error">
+                                                            Product name must be at least 5 characters long.
+                                                        </p>
+                                                        <p *ngIf="productName.errors?.['maxlength']" class="error">
+                                                            Product name must be maximum 100 characters long.
+                                                        </p>
+                                                    </ng-container>
+                                                </div>
+                                                <!-- Product category -->
+                                                <div class="form-floating mb-4 p-0">
+                                                    <select #productCategory="ngModel" ngModel class="form-select"
+                                                        aria-label="Product category" name="prd_category" required [(ngModel)]="product.prd_category">
+                                                        <option value="Cards" selected>Cards</option>
+                                                        <option value="Jewelry">Jewelry</option>
+                                                        <option value="Paintings">Paintings</option>
+                                                        <option value="Wooden Toys">Wooden Toys</option>
+                                                    </select>
+                                                    <label class="form-label" for="prd_category">Category</label>
+                                                    <ng-container
+                                                        *ngIf="productCategory.touched && productCategory.invalid">
+                                                        <p *ngIf="productCategory.errors?.['required']" class="error">
+                                                            Product category is required.
+                                                        </p>
+                                                    </ng-container>
+                                                </div>
+                                                <!-- Product description -->
+                                                <div class="form-floating mb-4 p-0">
+                                                    <!-- cols="45" rows="5"  -->
+                                                    <textarea #productDescription="ngModel" ngModel class="form-control"
+                                                        id="textAreaExample1" name="prd_description"
+                                                        id="prd_description" placeholder="Enter product description"
+                                                        required minlength="5" maxlength="1000" [(ngModel)]="product.prd_description"></textarea>
+                                                    <label class="form-label" for="prd_description">Description</label>
+                                                    <ng-container
+                                                        *ngIf="productDescription.touched && productDescription.invalid">
+                                                        <p *ngIf="productDescription.errors?.['required']"
+                                                            class="error">
+                                                            Product description is required.
+                                                        </p>
+                                                        <p *ngIf="productDescription.errors?.['minlength']"
+                                                            class="error">
+                                                            Product description must be at least 10 characters long.
+                                                        </p>
+                                                        <p *ngIf="productDescription.errors?.['maxlength']"
+                                                            class="error">
+                                                            Product description must be maximum 1000 characters long.
+                                                        </p>
+                                                    </ng-container>
+                                                </div>
+                                                <!-- Product price -->
+                                                <div class="form-floating mb-4 p-0">
+                                                    <input #productPrice="ngModel" ngModel type="number" step="any"
+                                                        name="prd_price" id="prd_price" class="form-control"
+                                                        placeholder="Enter product price" min="0.01" [(ngModel)]="product.prd_price">
+                                                    <label class="form-label" for="prd_price">Price</label>
+                                                    <ng-container *ngIf="productPrice.touched && productPrice.invalid">
+                                                        <p *ngIf="productDescription.errors?.['min']" class="error">
+                                                            Minimal product price is 0.01.
+                                                        </p>
+                                                    </ng-container>
+                                                </div>
+                                                <!-- Product discount -->
+                                                <div #productDiscount ngModel class="form-floating mb-4 p-0">
+                                                    <input type="number" step="0.01" name="prd_discount"
+                                                        id="prd_discount" class="form-control"
+                                                        placeholder="Enter product discount" [(ngModel)]="product.prd_discount">
+                                                    <label class="form-label" for="prd_discount">Discount</label>
+                                                </div>
+                                                <!-- Product image -->
+                                                <div #productImage ngModel class="form-floating mb-4 p-0">
+                                                    <input type="file" class="form-control" name="prd_image"
+                                                        id="prd_image" [(ngModel)]="product.prd_image"/>
+                                                    <label class="form-label" id="prd_image_label"
+                                                        for="prd_image">Image</label>
+                                                </div>
+                                                <div class="buttons">
+                                                    <button type="submit"
+                                                        class="btn custom-btn form-control mt-4 mb-3 btn-save">
+                                                        Update
+                                                    </button>
+                                                    <!-- Variant to navigate to home - (click)="navigateToHome()" -->
+                                                    <button (click)="isInEditMode = false" type="button"
+                                                        class="btn custom-btn form-control mt-4 mb-3 btn-cancel">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
 
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                </ng-container>
+            </ng-container>
         </div>
     </div>
 </section>

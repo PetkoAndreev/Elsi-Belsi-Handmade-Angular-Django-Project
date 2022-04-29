@@ -1,3 +1,5 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css');
+
 :host {
     width: 100%;
 }
@@ -5,7 +7,7 @@
 .profile {
     width: 100%;
     max-width: 500px;
-    height: 50vh;
+    min-height: 50vh;
     margin: 10em auto 1rem;
     padding: .5em;
     border: .3em solid #fa5417;
@@ -107,4 +109,8 @@
 
 .btn-save, .btn-cancel {
     width: 25%;
+}
+
+.flex p a {
+    padding-right: 10px;
 }

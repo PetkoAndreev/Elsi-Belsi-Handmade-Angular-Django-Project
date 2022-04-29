@@ -11,12 +11,12 @@
             </a>
 
             <div class="d-lg-none">
-                <ng-container *ngIf="!isLoggedIn">
-                    <a routerLink="/login" class="bi-person custom-icon me-3"></a>
+                <ng-container *ngIf="!(isLoggedIn$ | async)">
+                    <a routerLink="/user/login" class="bi-person custom-icon me-3"></a>
                 </ng-container>
-                <ng-container *ngIf="isLoggedIn">
-                    <a routerLink="/profile" class="bi-person custom-icon me-3"></a>
-                    <a href="product-detail.html" class="bi-door-closed custom-icon me-3"></a>
+                <ng-container *ngIf="(isLoggedIn$ | async)">
+                    <a routerLink="/user/profile" class="bi-person custom-icon me-3"></a>
+                    <a href="javascript:void(0);" class="bi-door-closed custom-icon me-3"></a>
                 </ng-container>
             </div>
 
@@ -39,21 +39,18 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact<i class="fas fa-sign-out"></i></a>
-                    </li>
-
-                    <li *ngIf="isLoggedIn" class="nav-item">
-                        <a routerLinkActive="active" class="nav-link" routerLink="/products/new">Add New Product</a>
+                        <a class="nav-link" href="contact.html">Contact</a>
                     </li>
                 </ul>
 
                 <div class="d-none d-lg-block">
-                    <ng-container *ngIf="!isLoggedIn">
-                        <a routerLink="/login" class="bi-person custom-icon me-3"></a>
+                    <ng-container *ngIf="!(isLoggedIn$ | async)">
+                        <a routerLink="/user/login" class="bi-person custom-icon me-3"></a>
                     </ng-container>
-                    <ng-container *ngIf="isLoggedIn">
-                        <a routerLink="/profile" class="bi-person custom-icon me-3"></a>
-                        <a href="product-detail.html" class="bi-door-closed custom-icon me-3"></a>
+                    <ng-container *ngIf="(isLoggedIn$ | async)">
+                        <a routerLink="/user/profile" class="bi-person custom-icon me-3"></a>
+                        <a href="javascript:void(0);" (click)="logoutHandler()"
+                            class="bi-door-closed custom-icon me-3"></a>
                     </ng-container>
                 </div>
             </div>
