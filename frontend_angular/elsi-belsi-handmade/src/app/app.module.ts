@@ -47,6 +47,7 @@ import { currentUserReducer } from './core/ngrx';
     })
   ],
   providers: [
+    // Comment this to stop auto login
     {
       provide: APP_INITIALIZER,
       useFactory: (authService: AuthService) => {
