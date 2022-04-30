@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { debounceTime, startWith, switchMap } from 'rxjs';
 import { IProfile } from 'src/app/core/interfaces';
 import { UserService } from 'src/app/core/services/user.service';
 
@@ -17,14 +18,17 @@ export class ProfileComponent implements OnInit {
 
   isInEditMode: boolean = false;
 
+  isShowFavorites: boolean = false;
+
+  isShowMyProducts: boolean = false;
+
   constructor(
     private userService: UserService,
-    private activatedRoute: ActivatedRoute,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
-    console.log(localStorage.getItem('access'))
+    // console.log(localStorage.getItem('access'))
     this.userService.getProfile$().subscribe({
       next: (user) => {
         this.currentUser = user
@@ -53,6 +57,16 @@ export class ProfileComponent implements OnInit {
 
   updateProfile(): void {
     this.isInEditMode = false;
+  }
+
+  showMyProducts(): void {
+    this.isShowFavorites = false;
+    this.isShowMyProducts = true;
+  }
+
+  showMyFavorites(): void {
+    this.isShowFavorites = true;
+    this.isShowMyProducts = false;
   }
 
 }

@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, catchError, EMPTY, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IProfile, IUser } from '../interfaces';
+import { IRootState, login, logout } from '../ngrx';
 import { CreateUserDto } from './user.service';
 
 @Injectable({
@@ -14,11 +16,14 @@ export class AuthService {
 
   private _currentUser = new BehaviorSubject<IUser>(undefined!);
 
-  currentUser$ = this._currentUser.asObservable();
+  // currentUser$ = this._currentUser.asObservable();
+  // Get current user from the global state
+  currentUser$ = this.store.select(globalState => globalState.currentUser);
   isLoggedIn$: Observable<boolean> = this.currentUser$.pipe(map(user => !!user))
 
   constructor(
     private httpClient: HttpClient,
+    private store: Store<IRootState>,
   ) { }
 
   login$(userData: { email: string, password: string }): Observable<IUser> {
@@ -44,12 +49,16 @@ export class AuthService {
   }
 
   handleLogin(newUser: IUser) {
+    // NGRX Login
+    this.store.dispatch(login({ user: newUser }));
     this._currentUser.next(newUser);
     console.log(this.currentUser$);
   }
 
   handleLogout() {
-    this._currentUser.next(undefined!);
+    // NGRX Logout
+    this.store.dispatch(logout());
+    // this._currentUser.next(undefined!);
   }
 
   authenticate(): Observable<IUser> {

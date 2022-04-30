@@ -1,4 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
+import { AboutComponent } from './features/pages/about/about.component';
+import { ContactComponent } from './features/pages/contact/contact.component';
+import { FaqComponent } from './features/pages/faq/faq.component';
 import { HomePageComponent } from './features/pages/home-page/home-page.component';
 import { PageNotFoundComponent } from './features/pages/page-not-found/page-not-found.component';
 
@@ -11,6 +14,18 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomePageComponent,
+  },
+  {
+    path: 'faq',
+    component: FaqComponent,
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
+  },
+  {
+    path: 'contact',
+    component: ContactComponent,
   },
   {
     path: 'user',

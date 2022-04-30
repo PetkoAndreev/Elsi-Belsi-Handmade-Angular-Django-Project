@@ -11,12 +11,11 @@ import { HeaderComponent } from './core/header/header.component';
 import { PagesModule } from './features/pages/pages.module';
 import { AuthService } from './core/services/auth.service';
 import { JwtModule } from "@auth0/angular-jwt";
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { currentUserReducer } from './core/ngrx';
 
-// export function tokenGetter() {
-//   // console.log(localStorage.getItem('access_token'))
-//   return localStorage.getItem('access_token');
-
-// }
 
 @NgModule({
   declarations: [
@@ -38,6 +37,13 @@ import { JwtModule } from "@auth0/angular-jwt";
         disallowedRoutes: [],
         authScheme: "Bearer " // Default value
       }
+    }),
+    StoreModule.forRoot({
+      currentUser: currentUserReducer,
+    }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production
     })
   ],
   providers: [

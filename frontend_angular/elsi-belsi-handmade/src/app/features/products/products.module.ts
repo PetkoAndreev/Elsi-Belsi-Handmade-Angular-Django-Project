@@ -21,6 +21,9 @@ import { ProductNewComponent } from './product-new/product-new.component'
     ProductsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+  ],
+  exports: [
+    ProductItemComponent,
   ]
 })
 export class ProductsModule { }

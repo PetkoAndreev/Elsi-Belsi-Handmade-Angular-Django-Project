@@ -21,7 +21,7 @@ class ProductsListCreateView(api_views.ListCreateAPIView):
     # Filter by field logic, search, ordering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['id', 'product_name', 'prd_price']
-    search_fields = ['id', 'product_name', 'prd_category', 'prd_description', 'prd_price']
+    search_fields = ['product_name']
     ordering_fields = ['id', 'product_name', 'prd_category']
 
     list_serializer_class = ProductsListSerializer

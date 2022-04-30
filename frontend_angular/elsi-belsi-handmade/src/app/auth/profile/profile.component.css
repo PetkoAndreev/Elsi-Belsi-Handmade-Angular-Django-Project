@@ -111,6 +111,24 @@
     width: 25%;
 }
 
+.btn-products {
+    background-color: #FF4400;
+    margin: auto;
+    width: 45%;
+}
+
+.btn-products:hover {
+    background-color: #5A5C6C;
+}
+
 .flex p a {
     padding-right: 10px;
+}
+
+.mb-5 {
+    color: #5A5C6C;
+}
+
+.mb-5:hover {
+    color: #FF4400;
 }

@@ -31,4 +31,8 @@ export class ProductService {
   loadProductById$(id: number): Observable<IProduct> {
     return this.http.get<IProduct>(`${apiUrl}/products/${id}/`);
   }
+
+  likeProduct(id: number): Observable<void> {
+    return this.http.put<void>(`${apiUrl}/products/${id}/`, {}, { withCredentials: true });
+  }
 }

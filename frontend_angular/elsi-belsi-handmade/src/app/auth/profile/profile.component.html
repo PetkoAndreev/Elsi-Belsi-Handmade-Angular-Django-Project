@@ -19,22 +19,30 @@
             <div class="flex">
                 <p>Social media links: </p>
                 <p>
-                    <a href={{currentUser.facebook_url}}><i class="fa-brands fa-facebook-f fa-xl"></i></a>
-                    <a href={{currentUser.linked_in_url}}><i class="fa-brands fa-linkedin-in fa-xl"></i></a>
-                    <a href={{currentUser.github_url}}><i class="fa-brands fa-github fa-xl"></i></a>
+                    <a *ngIf="!!currentUser.facebook_url" href={{currentUser.facebook_url}} target="_blank"><i class="fa-brands fa-facebook-f fa-xl"></i></a>
+                    <a *ngIf="!!currentUser.linked_in_url" href={{currentUser.linked_in_url}} target="_blank"><i class="fa-brands fa-linkedin-in fa-xl"></i></a>
+                    <a *ngIf="!!currentUser.github_url" href={{currentUser.github_url}} target="_blank"><i class="fa-brands fa-github fa-xl"></i></a>
                 </p>
             </div>
             <button (click)="isInEditMode = true" class="btn custom-btn form-control mt-4 mb-3 btn-edit">Edit</button>
+            <div class="flex">
+                <button (click)="showMyProducts()" class="btn custom-btn form-control mt-4 mb-3 btn-products">My
+                    Products</button>
+                <button (click)="showMyFavorites()" class="btn custom-btn form-control mt-4 mb-3 btn-products">My
+                    Favorites</button>
+            </div>
         </ng-container>
         <ng-container *ngIf="isInEditMode">
             <form #editProfileForm="ngForm" (ngSubmit)="updateProfile()" class="edit-profile">
                 <div class="flex">
                     <p>First Name: </p>
-                    <input #firstName="ngModel" ngModel type="text" name="first-name" id="first-name" [(ngModel)]="currentUser.first_name">
+                    <input #firstName="ngModel" ngModel type="text" name="first-name" id="first-name"
+                        [(ngModel)]="currentUser.first_name">
                 </div>
                 <div class="flex">
                     <p>Last Name: </p>
-                    <input #lastName="ngModel" ngModel type="text" name="last-name" id="last-name" [(ngModel)]="currentUser.last_name">
+                    <input #lastName="ngModel" ngModel type="text" name="last-name" id="last-name"
+                        [(ngModel)]="currentUser.last_name">
                 </div>
                 <div class="flex">
                     <p>Age: </p>
@@ -42,19 +50,23 @@
                 </div>
                 <div class="flex">
                     <p>Image: </p>
-                    <input #profileImage="ngModel" ngModel type="file" name="image" id="image" [(ngModel)]="currentUser.profile_image">
+                    <input #profileImage="ngModel" ngModel type="file" name="image" id="image"
+                        [(ngModel)]="currentUser.profile_image">
                 </div>
                 <div class="flex">
                     <p>Facebook URL: </p>
-                    <input #socialFacebook="ngModel" ngModel type="url" name="facebook" id="facebook" [(ngModel)]="currentUser.facebook_url">
+                    <input #socialFacebook="ngModel" ngModel type="url" name="facebook" id="facebook"
+                        [(ngModel)]="currentUser.facebook_url">
                 </div>
                 <div class="flex">
                     <p>LinkedIn URL: </p>
-                    <input #socialLinkedIn="ngModel" ngModel type="url" name="linkedIn" id="linkedIn" [(ngModel)]="currentUser.linked_in_url">
+                    <input #socialLinkedIn="ngModel" ngModel type="url" name="linkedIn" id="linkedIn"
+                        [(ngModel)]="currentUser.linked_in_url">
                 </div>
                 <div class="flex">
                     <p>GitHub URL: </p>
-                    <input #socialGitHub="ngModel" ngModel type="url" name="gitHub" id="gitHub" [(ngModel)]="currentUser.github_url">
+                    <input #socialGitHub="ngModel" ngModel type="url" name="gitHub" id="gitHub"
+                        [(ngModel)]="currentUser.github_url">
                 </div>
                 <!-- [disabled]="editProfileForm.invalid" -->
                 <button class="btn custom-btn form-control mt-4 mb-3 btn-save">Update</button>
@@ -64,3 +76,32 @@
         </ng-container>
     </ng-container>
 </div>
+
+<ng-container *ngIf=" isShowMyProducts">
+    <section class="products section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-5">My Products</h2>
+                </div>
+                <app-profile-product-item class="col-lg-4 col-12 mb-3" *ngFor="let product of currentUser.products;"
+                    [product]="product"></app-profile-product-item>
+                <div *ngIf="currentUser.products.length === 0 ">No Products!</div>
+            </div>
+        </div>
+    </section>
+</ng-container>
+<ng-container *ngIf="isShowFavorites">
+    <section class="products section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-5">My Favorites</h2>
+                </div>
+                <app-profile-product-item class="col-lg-4 col-12 mb-3" *ngFor="let favorite of currentUser.favorites"
+                    [product]="favorite"></app-profile-product-item>
+                <div *ngIf="currentUser.favorites.length === 0 ">No Favorites!</div>
+            </div>
+        </div>
+    </section>
+</ng-container>

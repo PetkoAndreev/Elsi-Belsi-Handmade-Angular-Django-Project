@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, Observable, startWith, switchMap, tap } from 'rxjs';
+import { debounceTime, Observable, startWith, switchMap } from 'rxjs';
 import { IProduct } from 'src/app/core/interfaces';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProductService } from 'src/app/core/services/product.service';
